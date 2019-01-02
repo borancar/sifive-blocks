@@ -148,6 +148,8 @@ abstract class GPIO(busWidthBytes: Int, c: GPIOParams)(implicit p: Parameters)
   val iofCtrl = Wire(Vec(c.width, new IOFCtrl()))
   val iofPlusSwPinCtrl = Wire(Vec(c.width, new EnhancedPinCtrl()))
 
+  val lip = IO(Vec(c.width, Bool(OUTPUT)))
+
   for (pin <- 0 until c.width) {
 
     // Software Pin Control
@@ -189,6 +191,10 @@ abstract class GPIO(busWidthBytes: Int, c: GPIOParams)(implicit p: Parameters)
 
     // Generate Interrupts
     interrupts(pin) := (riseIpReg(pin) & riseIeReg(pin)) |
+                         (fallIpReg(pin) & fallIeReg(pin)) |
+                         (highIpReg(pin) & highIeReg(pin)) |
+                         (lowIpReg(pin) & lowIeReg(pin))
+    lip(pin) := (riseIpReg(pin) & riseIeReg(pin)) |
                          (fallIpReg(pin) & fallIeReg(pin)) |
                          (highIpReg(pin) & highIeReg(pin)) |
                          (lowIpReg(pin) & lowIeReg(pin))
